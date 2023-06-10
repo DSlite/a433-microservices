@@ -1,0 +1,31 @@
+# Versioning
+version: "3.7"
+
+# List of Services
+services:
+  # item-app container
+  item-app:
+    # Using docker image from Github Packages
+    image: ghcr.io/dslite/item-app:v1
+    # Mapping port into port 80
+    ports:
+      - 80:8080
+    # Start when item-db already started
+    depends_on:
+      - item-db
+    # Restart policy
+    restart: always
+  # item-db container
+  item-db:
+    # Using mongo-3 image
+    image: mongo:3
+    # Specify volume and mount path
+    volumes:
+      - app-db:/data/db
+    # Restart policy
+    restart: always
+
+# List of Volumes
+volumes:
+  # app-db volume
+  app-db:
