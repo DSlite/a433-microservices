@@ -1,0 +1,9 @@
+[submodule "karsajobs"]
+    path = karsajobs
+    url = https://github.com/DSlite/a433-microservices.git
+    branch = karsajobs
+
+[submodule "karsajobs-ui"]
+    path = karsajobs-ui
+    url = https://github.com/DSlite/a433-microservices.git
+    branch = karsajobs-ui
