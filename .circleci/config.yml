@@ -45,7 +45,7 @@ jobs:
       - run: git submodule init
       - run: git submodule update
       - setup_remote_docker
-      - run: cd karsajobs && /bin/bash build_push_image_karsajobs.sh
+      - run: cd karsajobs && /bin/sh build_push_image_karsajobs.sh
 
   build-app-karsajobs-ui:
     executor: cimg
@@ -56,7 +56,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: Run Builder Script
-          command: cd karsajobs-ui && /bin/bash build_push_image_karsajobs_ui.sh
+          command: cd karsajobs-ui && /bin/sh build_push_image_karsajobs_ui.sh
 
 workflows:
   karsajobs-workflow:
