@@ -4,19 +4,11 @@ executors:
   cimg:
     docker:
       - image: cimg/base:stable
+  go:
+    docker:
+      - image: cimg/go:1.19
 
 jobs:
-  pwd:
-    executor: cimg
-    steps:
-      - checkout
-      - run: git submodule init
-      - run: git submodule update
-      - setup_remote_docker
-      - run: pwd
-      - run: ls -la
-      - run: ls karsajobs
-
   lint-dockerfile:
     executor: cimg
     parameters: 
@@ -30,7 +22,7 @@ jobs:
       - run: docker run --rm --interactive hadolint/hadolint < ./<< parameters.directory >>/Dockerfile
   
   test-app:
-    executor: cimg
+    executor: go
     steps:
       - checkout
       - run: git submodule init
@@ -61,7 +53,6 @@ jobs:
 workflows:
   karsajobs-workflow:
     jobs:
-      - pwd
       - lint-dockerfile:
           directory: karsajobs
       - test-app
@@ -69,7 +60,6 @@ workflows:
 
   karsajobs-ui-workflow:
     jobs:
-      - pwd
       - lint-dockerfile:
           directory: karsajobs-ui
       - build-app-karsajobs-ui
