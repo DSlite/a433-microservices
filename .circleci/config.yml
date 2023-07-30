@@ -9,10 +9,9 @@ jobs:
   pwd:
     executor: docker
     steps:
-      - checkout:
-          post-steps:
-            - run: git submodule init
-            - run: git submodule update
+      - run: git clone -b "$CIRCLE_BRANCH" "$CIRCLE_REPOSITORY_URL" .
+      - run: git submodule init
+      - run: git submodule update
       - setup_remote_docker
       - run: pwd
       - run: ls -la
@@ -24,10 +23,9 @@ jobs:
       directory:
         type: string
     steps:
-      - checkout:
-          post-steps:
-            - run: git submodule init
-            - run: git submodule update
+      - run: git clone -b "$CIRCLE_BRANCH" "$CIRCLE_REPOSITORY_URL" .
+      - run: git submodule init
+      - run: git submodule update
       - setup_remote_docker
       - run:
           name: Run Hadolint
@@ -36,10 +34,9 @@ jobs:
   test-app:
     executor: docker
     steps:
-      - checkout:
-          post-steps:
-            - run: git submodule init
-            - run: git submodule update
+      - run: git clone -b "$CIRCLE_BRANCH" "$CIRCLE_REPOSITORY_URL" .
+      - run: git submodule init
+      - run: git submodule update
       - run:
           name: Testing App
           command: cd karsajobs && go test -v -short --count=1 $(go list ./...)
@@ -48,26 +45,24 @@ jobs:
   build-app-karsajobs:
     executor: docker
     steps:
-      - checkout:
-          post-steps:
-            - run: git submodule init
-            - run: git submodule update
+      - run: git clone -b "$CIRCLE_BRANCH" "$CIRCLE_REPOSITORY_URL" .
+      - run: git submodule init
+      - run: git submodule update
       - setup_remote_docker
       - run:
           name: Run Builder Script
-          command: cd karsajobs && bash build_push_image_karsajobs.sh
+          command: cd karsajobs && /bin/bash build_push_image_karsajobs.sh
 
   build-app-karsajobs-ui:
     executor: docker
     steps:
-      - checkout:
-          post-steps:
-            - run: git submodule init
-            - run: git submodule update
+      - run: git clone -b "$CIRCLE_BRANCH" "$CIRCLE_REPOSITORY_URL" .
+      - run: git submodule init
+      - run: git submodule update
       - setup_remote_docker
       - run:
           name: Run Builder Script
-          command: cd karsajobs-ui && bash build_push_image_karsajobs_ui.sh
+          command: cd karsajobs-ui && /bin/bash build_push_image_karsajobs_ui.sh
 
 workflows:
   karsajobs-workflow:
