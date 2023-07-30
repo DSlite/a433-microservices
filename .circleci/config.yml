@@ -12,6 +12,8 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: pwd
+      - run: ls
+      - run: ls karsajobs
 
   lint-dockerfile:
     executor: docker
