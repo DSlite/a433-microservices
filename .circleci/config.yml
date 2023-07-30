@@ -1,0 +1,60 @@
+version: 2.1
+
+executors:
+  docker:
+    docker:
+      - image: docker:stable
+
+jobs:
+  lint-dockerfile:
+    executor: docker
+    parameters: 
+      directory:
+        type: string
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Run Hadolint
+          command: docker run --rm --interactive hadolint/hadolint < << parameters.directory >>/Dockerfile
+  
+  test-app:
+    executor: docker
+    steps:
+      - checkout
+      - run:
+          name: Testing App
+          command: cd karsajobs && go test -v -short --count=1 $(go list ./...)
+
+
+  build-app-karsajobs:
+    executor: docker
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Run Builder Script
+          command: cd karsajobs && bash build_push_image_karsajobs.sh
+
+  build-app-karsajobs-ui:
+    executor: docker
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Run Builder Script
+          command: cd karsajobs-ui && bash build_push_image_karsajobs_ui.sh
+
+workflows:
+  karsajobs-workflow:
+    jobs:
+      - lint-dockerfile:
+          directory: karsajobs
+      - test-app
+      - build-app-karsajobs 
+
+  karsajobs-ui-workflow:
+    jobs:
+      - lint-dockerfile:
+          directory: karsajobs-ui
+      - build-app-karsajobs-ui
