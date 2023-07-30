@@ -6,6 +6,13 @@ executors:
       - image: docker:stable
 
 jobs:
+  pwd:
+    executor: docker
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: pwd
+
   lint-dockerfile:
     executor: docker
     parameters: 
@@ -48,6 +55,7 @@ jobs:
 workflows:
   karsajobs-workflow:
     jobs:
+      - pwd
       - lint-dockerfile:
           directory: karsajobs
       - test-app
@@ -55,6 +63,7 @@ workflows:
 
   karsajobs-ui-workflow:
     jobs:
+      - pwd
       - lint-dockerfile:
           directory: karsajobs-ui
       - build-app-karsajobs-ui
