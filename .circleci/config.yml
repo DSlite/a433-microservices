@@ -1,56 +1,94 @@
 version: 2.1
 
+# Defining executors
 executors:
+  # Base cimg
   cimg:
     docker:
       - image: cimg/base:stable
+  # Go cimg
   go:
     docker:
       - image: cimg/go:1.19
 
+# Defining jobs
 jobs:
+
+  # Hadolint Job
   lint-dockerfile:
+    # Defining executor with cimg
     executor: cimg
+    # Defining parameters
     parameters: 
+      # directory parameter for specifying Dockerfile directory
       directory:
         type: string
     steps:
       - checkout
-      - run: git submodule init
-      - run: git submodule update
+      - run: 
+          name: Initializing submodule
+          command: git submodule init
+      - run: 
+          name: Updating submodule
+          command: git submodule update
       - setup_remote_docker
-      - run: docker run --rm --interactive hadolint/hadolint < ./<< parameters.directory >>/Dockerfile
+      - run: 
+          name: Linting Dockerfile with Hadolint
+          command: docker run --rm --interactive hadolint/hadolint < ./<< parameters.directory >>/Dockerfile
   
+  # App Testing Job
   test-app:
+    # Defining executor with go
     executor: go
     steps:
       - checkout
-      - run: git submodule init
-      - run: git submodule update
-      - run: cd karsajobs && go test -v -short --count=1 $(go list ./...)
+      - run: 
+          name: Initializing submodule
+          command: git submodule init
+      - run: 
+          name: Updating submodule
+          command: git submodule update
+      - run: 
+          name: Testing App with go test
+          command: cd karsajobs && go test -v -short --count=1 $(go list ./...)
 
-
+  # Build Karsajobs Job
   build-app-karsajobs:
+    # Defining executor with cimg
     executor: cimg
     steps:
       - checkout
-      - run: git submodule init
-      - run: git submodule update
+      - run: 
+          name: Initializing submodule
+          command: git submodule init
+      - run: 
+          name: Updating submodule
+          command: git submodule update
       - setup_remote_docker
-      - run: cd karsajobs && /bin/sh build_push_image_karsajobs.sh
+      - run: 
+          name: Building Karsajobs with bash script
+          command: cd karsajobs && /bin/sh build_push_image_karsajobs.sh
 
+  # Build Karsajobs-UI Job
   build-app-karsajobs-ui:
+    # Defining executor with cimg
     executor: cimg
     steps:
       - checkout
-      - run: git submodule init
-      - run: git submodule update
+      - run: 
+          name: Initializing submodule
+          command: git submodule init
+      - run: 
+          name: Updating submodule
+          command: git submodule update
       - setup_remote_docker
       - run:
-          name: Run Builder Script
-          command: cd karsajobs-ui && /bin/sh build_push_image_karsajobs_ui.sh
+          name: Building Karsajobs-UI with bash script
+          command: cd karsajobs-ui && /bin/sh build_push_image_karsajobs-ui.sh
 
+# Defining workflows
 workflows:
+  # Karsajobs workflow
   karsajobs-workflow:
     jobs:
       - lint-dockerfile:
@@ -58,6 +96,7 @@ workflows:
       - test-app
       - build-app-karsajobs 
 
+  # Karsajobs-UI workflow
   karsajobs-ui-workflow:
     jobs:
       - lint-dockerfile:
