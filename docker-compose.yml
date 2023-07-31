@@ -1,0 +1,56 @@
+version: "3.2"
+services:
+  # RabbitMQ container
+  rabbitmq:
+    # Pull from docker hub
+    image: rabbitmq:3.11-management
+    container_name: 'rabbitmq_container'
+    # Exposing RabbitMQ ports
+    ports:
+        - 5673:5672
+        - 15673:15672
+    # Configuring volume
+    volumes:
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    # Setting up network
+    networks:
+        - rabbitmq_network
+  # Order service container
+  order:
+    # Pull from github packages
+    image: ghcr.io/dslite/order-service:latest
+    container_name: 'order-service'
+    # Start after rabbitmq container
+    depends_on:
+      - "rabbitmq"
+    # Exposing ports
+    ports:
+      - 3000:3000
+    # Defining environment variable
+    environment:
+      AMQP_URL: amqp://guest:guest@rabbitmq:5672
+    # Setting up network
+    networks:
+      - rabbitmq_network
+  # Shipping service container
+  shipping:
+    # Pull from github packages
+    image: ghcr.io/dslite/shipping-service:latest
+    container_name: 'shipping-service'
+    # Start after rabbitmq container
+    depends_on:
+      - "rabbitmq"
+    # Exposing ports
+    ports:
+      - 3001:3001
+    # Defining environment variable
+    environment:
+      AMQP_URL: amqp://guest:guest@rabbitmq:5672
+    # Setting up network
+    networks:
+      - rabbitmq_network
+# Defining network
+networks:
+  rabbitmq_network:
+    driver: bridge
