@@ -1,9 +1,9 @@
 [submodule "order-service"]
-  path = order-service
-  url = https://github.com/DSlite/a433-microservices.git
+	path = order-service
+	url = https://github.com/DSlite/a433-microservices.git
   branch = order-service
 
 [submodule "shipping-service"]
-  path = shipping-service
-  url = https://github.com/DSlite/a433-microservices.git
+	path = shipping-service
+	url = https://github.com/DSlite/a433-microservices.git
   branch = order-service
